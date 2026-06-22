@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Project.Models"
+             x:Class="Project.MainPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#1b2838">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" RowSpacing="0">
+
+        <Grid Grid.Row="0" Padding="16,14,16,8" BackgroundColor="#171a21">
+            <Label Text="STEAM СКИДКИ"
+                   TextColor="#66c0f4"
+                   FontAttributes="Bold"
+                   FontSize="20"
+                   CharacterSpacing="1" />
+        </Grid>
+
+        <Grid Grid.Row="1" Padding="16,8,16,8" BackgroundColor="#171a21" ColumnDefinitions="*,Auto">
+            <Frame Grid.Column="0"
+                   BackgroundColor="#316282"
+                   CornerRadius="6"
+                   Padding="10,0"
+                   HasShadow="False"
+                   HeightRequest="42">
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <Entry Grid.Column="0"
+                           Text="{Binding SearchQuery}"
+                           Placeholder="Поиск игр в Steam..."
+                           PlaceholderColor="#8f98a0"
+                           TextColor="White"
+                           BackgroundColor="Transparent"
+                           VerticalOptions="Center" />
+                    <Button Grid.Column="1"
+                            Text="✕"
+                            Command="{Binding ClearSearchCommand}"
+                            IsVisible="{Binding IsSearchMode}"
+                            BackgroundColor="Transparent"
+                            TextColor="#8f98a0"
+                            FontSize="14"
+                            Padding="6,0"
+                            WidthRequest="32" />
+                </Grid>
+            </Frame>
+        </Grid>
+
+        <Grid Grid.Row="2" Padding="16,4,16,12" BackgroundColor="#171a21" ColumnDefinitions="*,*" ColumnSpacing="10">
+            <Frame Grid.Column="0" BackgroundColor="#2a3f54" CornerRadius="6" Padding="0" HasShadow="False" HeightRequest="40">
+                <Picker ItemsSource="{Binding Regions}"
+                        SelectedItem="{Binding SelectedRegion}"
+                        TextColor="White"
+                        TitleColor="#8f98a0"
+                        BackgroundColor="Transparent"
+                        FontSize="13"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Center" />
+            </Frame>
+            <Frame Grid.Column="1" BackgroundColor="#2a3f54" CornerRadius="6" Padding="0" HasShadow="False" HeightRequest="40">
+                <Picker ItemsSource="{Binding SortOptions}"
+                        SelectedItem="{Binding SelectedSort}"
+                        TextColor="White"
+                        TitleColor="#8f98a0"
+                        BackgroundColor="Transparent"
+                        FontSize="13"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Center"
+                        IsEnabled="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}" />
+            </Frame>
+        </Grid>
+
+        <Grid Grid.Row="3">
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                IsVisible="{Binding IsBusy}"
+                                Color="#66c0f4"
+                                HeightRequest="40"
+                                VerticalOptions="Start"
+                                Margin="0,20,0,0" />
+
+            <VerticalStackLayout IsVisible="{Binding IsRegionAvailable, Converter={StaticResource InverseBoolConverter}}"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Padding="40"
+                                 Spacing="14">
+                <Label Text="🚫" FontSize="48" HorizontalOptions="Center" />
+                <Label Text="Регион недоступен"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       FontSize="20"
+                       HorizontalOptions="Center" />
+                <Label Text="Steam полностью заблокировал доступ к магазину для выбранного региона. Попробуйте выбрать другой регион."
+                       TextColor="#8f98a0"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <ScrollView IsVisible="{Binding IsRegionAvailable}">
+                <VerticalStackLayout Spacing="0" Padding="0,0,0,20">
+
+                    <CollectionView ItemsSource="{Binding Games}"
+                                     SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SteamGame">
+                                <Grid Padding="16,6">
+                                    <Frame BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectionColorConverter}}"
+                                           CornerRadius="8"
+                                           Padding="0"
+                                           HasShadow="False"
+                                           BorderColor="{Binding IsSelected, Converter={StaticResource SelectionBorderConverter}}">
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnGameTapped" CommandParameter="{Binding .}" />
+                                        </Frame.GestureRecognizers>
+                                        <Grid ColumnDefinitions="140,*" Padding="0">
+                                            <Image Grid.Column="0"
+                                                   Source="{Binding ImageUrl}"
+                                                   Aspect="AspectFill"
+                                                   HeightRequest="78"
+                                                   WidthRequest="140" />
+                                            <Grid Grid.Column="1" Padding="12,8" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
+                                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       Text="{Binding Title}"
+                                                       TextColor="White"
+                                                       FontAttributes="Bold"
+                                                       FontSize="15"
+                                                       LineBreakMode="TailTruncation" />
+                                                <Label Grid.Row="2" Grid.Column="0"
+                                                       Text="{Binding DiscountPercent}"
+                                                       TextColor="#a4d007"
+                                                       BackgroundColor="#4c6b22"
+                                                       FontAttributes="Bold"
+                                                       FontSize="13"
+                                                       Padding="6,2"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="Start" />
+                                                <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                                                    <Label Text="{Binding OriginalPrice}"
+                                                           TextDecorations="Strikethrough"
+                                                           TextColor="#8f98a0"
+                                                           FontSize="12"
+                                                           VerticalOptions="Center" />
+                                                    <Label Text="{Binding CurrentPrice}"
+                                                           TextColor="#beee11"
+                                                           FontAttributes="Bold"
+                                                           FontSize="14"
+                                                           VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                            </Grid>
+                                        </Grid>
+                                    </Frame>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Grid IsVisible="{Binding HasBlockedGames}"
+                          RowDefinitions="Auto,Auto"
+                          Margin="0,12,0,0">
+
+                        <Button Grid.Row="0"
+                                Text="{Binding BlockedSectionHeaderText}"
+                                Clicked="OnToggleBlockedSection"
+                                BackgroundColor="#2a3f54"
+                                TextColor="White"
+                                FontSize="13"
+                                CornerRadius="6"
+                                Margin="16,0"
+                                HorizontalOptions="Fill" />
+
+                        <VerticalStackLayout Grid.Row="1"
+                                              x:Name="BlockedGamesPanel"
+                                              IsVisible="False"
+                                              Spacing="8"
+                                              Margin="0,10,0,0">
+
+                            <CollectionView ItemsSource="{Binding BlockedGames}"
+                                             SelectionMode="None">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:SteamGame">
+                                        <Grid Padding="16,0">
+                                            <Frame BackgroundColor="#241a1a"
+                                                   BorderColor="#5c2b2b"
+                                                   CornerRadius="8"
+                                                   Padding="0"
+                                                   HasShadow="False">
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnGameTapped" CommandParameter="{Binding .}" />
+                                                </Frame.GestureRecognizers>
+                                                <Grid ColumnDefinitions="100,*" Padding="0">
+                                                    <Image Grid.Column="0"
+                                                           Source="{Binding ImageUrl}"
+                                                           Aspect="AspectFill"
+                                                           HeightRequest="56"
+                                                           WidthRequest="100"
+                                                           Opacity="0.55" />
+                                                    <Grid Grid.Column="1" Padding="10,6" RowDefinitions="Auto,Auto">
+                                                        <Label Grid.Row="0"
+                                                               Text="{Binding Title}"
+                                                               TextColor="White"
+                                                               FontAttributes="Bold"
+                                                               FontSize="14"
+                                                               LineBreakMode="TailTruncation" />
+                                                        <Label Grid.Row="1"
+                                                               Text="Недоступно в России"
+                                                               TextColor="#e06c6c"
+                                                               FontSize="12" />
+                                                    </Grid>
+                                                </Grid>
+                                            </Frame>
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                        </VerticalStackLayout>
+
+                    </Grid>
+
+                </VerticalStackLayout>
+            </ScrollView>
+
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

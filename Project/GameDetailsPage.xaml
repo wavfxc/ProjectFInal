@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Project.GameDetailsPage"
+             Title="{Binding Game.Title}"
+             BackgroundColor="#1b2838">
+
+    <ScrollView>
+        <VerticalStackLayout x:Name="RootStack" Spacing="0" Opacity="0">
+
+            <Grid>
+                <Image Source="{Binding Game.ImageUrl}"
+                       Aspect="AspectFill"
+                       HeightRequest="220" />
+                <BoxView Color="#000000" Opacity="0.25" HeightRequest="220" />
+            </Grid>
+
+            <VerticalStackLayout Padding="18,16" Spacing="14">
+
+                <Label Text="{Binding Game.Title}"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       FontSize="24" />
+
+                <FlexLayout x:Name="GenresLayout"
+                            BindableLayout.ItemsSource="{Binding Genres}"
+                            Wrap="Wrap"
+                            Direction="Row"
+                            JustifyContent="Start"
+                            AlignItems="Center">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="#2a3f54"
+                                   CornerRadius="14"
+                                   Padding="10,4"
+                                   Margin="0,0,8,8"
+                                   HasShadow="False">
+                                <Label Text="{Binding .}" TextColor="#c6d4df" FontSize="12" />
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
+                    <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
+                        <Label Text="{Binding OriginalPrice}"
+                               TextDecorations="Strikethrough"
+                               TextColor="#8f98a0"
+                               FontSize="15"
+                               VerticalOptions="Center" />
+                        <Label Text="{Binding CurrentPrice}"
+                               TextColor="#beee11"
+                               FontAttributes="Bold"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Frame Grid.Column="1"
+                           BackgroundColor="#2a3f54"
+                           CornerRadius="6"
+                           Padding="8,4"
+                           HasShadow="False"
+                           IsVisible="{Binding MetacriticScore, Converter={StaticResource StringNotEmptyConverter}}">
+                        <Label Text="{Binding MetacriticScore, StringFormat='Metacritic: {0}'}"
+                               TextColor="#66c0f4"
+                               FontSize="12"
+                               FontAttributes="Bold" />
+                    </Frame>
+                </Grid>
+
+                <Frame BackgroundColor="#3d2424"
+                       BorderColor="#7a3b3b"
+                       CornerRadius="8"
+                       Padding="12"
+                       HasShadow="False"
+                       IsVisible="{Binding IsBlocked}">
+                    <Label Text="Покупка недоступна для выбранного региона."
+                           TextColor="#f0a0a0"
+                           FontSize="13" />
+                </Frame>
+
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                    IsVisible="{Binding IsLoading}"
+                                    Color="#66c0f4" />
+
+                <Label Text="ОПИСАНИЕ"
+                       TextColor="#66c0f4"
+                       FontAttributes="Bold"
+                       FontSize="13"
+                       CharacterSpacing="1" />
+                <Label Text="{Binding Description}"
+                       TextColor="#c6d4df"
+                       FontSize="14"
+                       LineHeight="1.3" />
+
+                <Label Text="ТРЕЙЛЕР"
+                       TextColor="#66c0f4"
+                       FontAttributes="Bold"
+                       FontSize="13"
+                       CharacterSpacing="1"
+                       IsVisible="{Binding HasTrailer}" />
+
+                <Frame IsVisible="{Binding HasTrailer}"
+                       BackgroundColor="#000000"
+                       Padding="0"
+                       CornerRadius="8"
+                       HasShadow="False"
+                       HeightRequest="200">
+                    <toolkit:MediaElement Source="{Binding TrailerUrl}"
+                                          ShouldAutoPlay="False"
+                                          ShouldShowPlaybackControls="True"
+                                          HeightRequest="200" />
+                </Frame>
+
+                <Label Text="СКРИНШОТЫ"
+                       TextColor="#66c0f4"
+                       FontAttributes="Bold"
+                       FontSize="13"
+                       CharacterSpacing="1"
+                       IsVisible="{Binding HasScreenshots}" />
+
+                <CollectionView ItemsSource="{Binding Screenshots}"
+                                 HeightRequest="140"
+                                 IsVisible="{Binding HasScreenshots}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="0" CornerRadius="8" HasShadow="False" BackgroundColor="#16202d">
+                                <Image Source="{Binding .}"
+                                       Aspect="AspectFill"
+                                       WidthRequest="220"
+                                       HeightRequest="140" />
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
