@@ -136,7 +136,7 @@ Project/
 
 | Пакет | Версия | Назначение |
 |---|---|---|
-| [.NET MAUI](https://learn.microsoft.com/dotnet/maui/) | 8.0 | Кроссплатформенный UI-фреймворк |
+| [.NET MAUI](https://learn.microsoft.com/dotnet/maui/) | 9.0 | Кроссплатформенный UI-фреймворк |
 | [HtmlAgilityPack](https://www.nuget.org/packages/HtmlAgilityPack) | 1.11.71 | Парсинг HTML страницы поиска Steam |
 | [CommunityToolkit.Maui](https://www.nuget.org/packages/CommunityToolkit.Maui) | 14.2.0 | Расширения MAUI (конвертеры, поведения) |
 | [CommunityToolkit.Maui.MediaElement](https://www.nuget.org/packages/CommunityToolkit.Maui.MediaElement) | 10.0.0 | Воспроизведение видео-трейлеров |
@@ -152,7 +152,7 @@ Project/
 ### Требования
 
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) (17.8+) с установленной нагрузкой **.NET Multi-platform App UI development**
-- .NET 8 SDK
+- .NET 9 SDK
 - Для Android: Android SDK (устанавливается вместе с нагрузкой MAUI)
 - Для iOS/macOS: Mac с Xcode (сборка под Windows для этих платформ не поддерживается)
 
@@ -233,25 +233,6 @@ GET https://store.steampowered.com/api/appdetails?appids={id}&cc={region}&l=russ
 - **CancellationToken** — отменяет предыдущий незавершённый запрос при смене региона или новом поисковом вводе, чтобы избежать гонки ответов
 
 ---
-
-## Известные ограничения
-
-- **HTML-скрейпинг хрупкий** — если Steam изменит вёрстку страницы поиска, парсинг списка скидок может перестать работать. Поломка изолирована в `SteamParserService` и не затрагивает остальной код
-- **Список заблокированных игр статический** — обновляется только при ручном добавлении новых AppId в `BlockedGamesProvider`, не обнаруживает новые блокировки автоматически
-- **Rate limits Steam** — частые запросы к `appdetails` могут привести к временной блокировке по IP (HTTP 429)
-- **Регион "Украина"** — полностью заблокирован Steam с 2022 года; приложение корректно это обрабатывает, но не может показать список игр для этого региона
-
----
-
-## Возможные улучшения
-
-- [ ] Кэширование результатов запросов (например, через `Microsoft.Extensions.Caching.Memory`)
-- [ ] Автоматическое определение новых заблокированных игр через периодическую серверную задачу
-- [ ] Поддержка дополнительных регионов
-- [ ] Offline-режим с локальным хранением последних загруженных данных
-- [ ] Юнит-тесты для `SteamParserService` с мокированием `HttpClient`
-- [ ] Push-уведомления о новых скидках на отслеживаемые игры
-
 ---
 
 ## Лицензия
