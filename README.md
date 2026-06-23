@@ -2,7 +2,7 @@
 
 Мобильное приложение на **.NET MAUI** для отслеживания скидок в Steam. Показывает актуальные предложения по регионам, позволяет искать игры по всему каталогу, сортировать по цене и популярности, а также отображает игры, недоступные для покупки в России.
 
-![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)
+![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet)
 ![MAUI](https://img.shields.io/badge/MAUI-purple?logo=dotnet)
 ![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20macOS-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-green)
